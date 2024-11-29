@@ -1,0 +1,117 @@
+﻿@page "/"
+@inject HttpClient Http
+@using GrpcService
+@using Grpc.Net.Client
+@using Grpc.Net.Client.Web
+@using System.Net.Http
+
+<PageTitle>Weather</PageTitle>
+
+<h1>Your doings</h1>
+
+<InputText @bind-Value="@inputText" @oninput="@(e => inputText = e.Value.ToString())" @onkeypress="@(async e => {if (e.Key == "Enter") await CreateDoing();})"></InputText>
+
+<p>Show only completed doings: <InputCheckbox @bind-Value="onlyCompleted" @oninput="@(async e => {onlyCompleted = (bool)e.Value; await ShowOnlyCompletedDoings();})" class="form-check-input"></InputCheckbox></p>
+
+@if (doings == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>AddedDate</th>
+                <th>IsComplete</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var i in doings.Doings)
+            {
+                <tr>
+                    <td>@i.Id</td>
+                    <td><InputText @bind-Value="@i.Name" @oninput="@(e => i.Name = e.Value.ToString())" @onkeypress="@(async e => {if (e.Key == "Enter") await UpdateDoing(i);})"></InputText></td>
+                    <td>@i.AddedDate</td>
+                    <td><InputCheckbox class="form-check-input" @bind-Value="@i.IsComplete" @oninput="@(async e => {i.IsComplete = (bool)e.Value; await UpdateDoing(i);})"></InputCheckbox></td>
+                    <td><button class="btn btn-close" @onclick="@(() => DeleteDoing(i.Id))"></button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    private ListReply? doings = null;
+    private string inputText = "";
+    private bool onlyCompleted = false;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var channel = GrpcChannel.ForAddress("https://localhost:7244", new GrpcChannelOptions { HttpHandler = new GrpcWebHandler(new HttpClientHandler()) });
+
+        var client = new DoingsService.DoingsServiceClient(channel);
+
+        doings = await client.GetDoingsAsync(new GetDoingsRequest {OnlyIsCompleteDoings = false});
+    }
+    public async Task CreateDoing()
+    {
+        var createDoingRequest = new CreateDoingRequest { Name = inputText, AddedDate = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow), CompletionDate = new Google.Protobuf.WellKnownTypes.Timestamp() };
+
+        using var channel = GrpcChannel.ForAddress("https://localhost:7244", new GrpcChannelOptions { HttpHandler = new GrpcWebHandler(new HttpClientHandler()) });
+
+        var client = new DoingsService.DoingsServiceClient(channel);
+
+        await client.CreateDoingAsync(createDoingRequest);
+
+        doings = await client.GetDoingsAsync(new GetDoingsRequest { OnlyIsCompleteDoings = false });
+
+    }
+    public async Task UpdateDoing(DoingReply? doing)
+    {
+        if (doing != null)
+        {
+            var updateDoingRequest = new UpdateDoingRequst { Id = doing.Id, Name = doing.Name, AddedDate = doing.AddedDate, IsComplete = doing.IsComplete};
+            if (doing.IsComplete)
+            {
+                updateDoingRequest.CompletionDate = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+            }
+            else
+            {
+                updateDoingRequest.CompletionDate = new Google.Protobuf.WellKnownTypes.Timestamp();
+            }
+            using var channel = GrpcChannel.ForAddress("https://localhost:7244", new GrpcChannelOptions { HttpHandler = new GrpcWebHandler(new HttpClientHandler()) });
+
+            var client = new DoingsService.DoingsServiceClient(channel);
+
+            await client.UpdateDoingAsync(updateDoingRequest);
+
+            doings = await client.GetDoingsAsync(new GetDoingsRequest { OnlyIsCompleteDoings = false });
+        }
+    }
+    public async void DeleteDoing(int id)
+    {
+        var deleteDoingRequest = new DeleteDoingRequest { Id = id };
+
+        using var channel = GrpcChannel.ForAddress("https://localhost:7244", new GrpcChannelOptions { HttpHandler = new GrpcWebHandler(new HttpClientHandler()) });
+
+        var client = new DoingsService.DoingsServiceClient(channel);
+
+        client.DeleteDoing(deleteDoingRequest);
+
+        doings = await client.GetDoingsAsync(new GetDoingsRequest { OnlyIsCompleteDoings = false });
+    }
+    public async Task ShowOnlyCompletedDoings()
+    {
+        using var channel = GrpcChannel.ForAddress("https://localhost:7244", new GrpcChannelOptions { HttpHandler = new GrpcWebHandler(new HttpClientHandler()) });
+
+        var client = new DoingsService.DoingsServiceClient(channel);
+
+        doings = await client.GetDoingsAsync(new GetDoingsRequest { OnlyIsCompleteDoings = onlyCompleted });
+    }
+}

@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+option csharp_namespace = "TODOList.GrpcService";
+
+import "google/protobuf/Timestamp.proto";
+
+package doings;
+
+service DoingsService {
+	rpc GetDoings(GetDoingsRequest) returns (ListReply);
+	rpc GetDoing (GetDoingRequest) returns (DoingReply);
+	rpc CreateDoing(CreateDoingRequest) returns (DoingReply);
+	rpc DeleteDoing(DeleteDoingRequest) returns (DoingReply);
+	rpc UpdateDoing(UpdateDoingRequst) returns (DoingReply);
+}
+
+message GetDoingsRequest {
+  bool only_is_complete_doings = 1;
+}
+
+message GetDoingRequest {
+  int32 id = 1;
+}
+
+message CreateDoingRequest {
+  string name = 1;
+  google.protobuf.Timestamp added_date = 2;
+  google.protobuf.Timestamp completion_date = 3;
+  bool is_complete = 4;
+}
+
+message DeleteDoingRequest {
+  int32 id = 1;
+}
+
+message UpdateDoingRequst {
+  int32 id = 1;
+  string name = 2;
+  google.protobuf.Timestamp added_date = 3;
+  google.protobuf.Timestamp completion_date = 4;
+  bool is_complete = 5;
+}
+
+message ListReply {
+  repeated DoingReply Doings = 1;
+}
+
+message DoingReply {
+  int32 id = 1;
+  string name = 2;
+  google.protobuf.Timestamp added_date = 3;
+  google.protobuf.Timestamp completion_date = 4;
+  bool is_complete = 5;
+}

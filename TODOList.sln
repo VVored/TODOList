@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35004.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TODOList.GrpcService", "TODOList.GrpcService\TODOList.GrpcService.csproj", "{BDFC7EA0-B705-4235-A788-6CCC9871DF5B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TODOList.UI", "TODOList.UI\TODOList.UI.csproj", "{DF044D4E-435B-47C5-BA6A-33B6B7C0066D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BDFC7EA0-B705-4235-A788-6CCC9871DF5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDFC7EA0-B705-4235-A788-6CCC9871DF5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDFC7EA0-B705-4235-A788-6CCC9871DF5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDFC7EA0-B705-4235-A788-6CCC9871DF5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF044D4E-435B-47C5-BA6A-33B6B7C0066D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF044D4E-435B-47C5-BA6A-33B6B7C0066D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF044D4E-435B-47C5-BA6A-33B6B7C0066D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF044D4E-435B-47C5-BA6A-33B6B7C0066D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {234D5387-7DFE-47A6-90B6-1257DBC6F86F}
+	EndGlobalSection
+EndGlobal
